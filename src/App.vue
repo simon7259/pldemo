@@ -2,14 +2,52 @@
 
 
     <div id="app">
+
         <img alt="Vue logo" src="./assets/OIP.jpg">
 
-        <a-table :columns="columns"
+        <div class="container">
+
+            <a-form class="fields" layout="inline">
+                <a-form-item
+                    label="Status"
+                >
+                    <a-input placeholder="input placeholder" />
+                </a-form-item>
+                <a-form-item
+                    label="VMV"
+                >
+                    <a-input placeholder="input placeholder" />
+                </a-form-item>
+            </a-form>
+
+            <div class="buttons">
+                <a-button type="primary" class="button-item" @click="query">Query</a-button>
+                <a-button type="primary" class="button-item" @click="actions">Action</a-button>
+                <a-button type="primary" class="button-item" @click="cancel">Cencel</a-button>                
+            </div>
+
+            <a-table :columns="columns"
                :data-source="data"
+               :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
                :pagination=false
-        >
-            <a slot="name" slot-scope="text">{{ text }}</a>
-        </a-table>
+            >
+                <a slot="name" slot-scope="text">{{ text }}</a>
+            </a-table>
+
+        </div>
+
+        <a-modal v-model="actionVisible" title="Action Modal" @ok="handleAction" width="1000px" >
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+        </a-modal>
+
+        <a-modal v-model="cancelVisible" title="Cancel Modal" @ok="handleCancel" width="1000px" >
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+        </a-modal>
+        
     </div>
 
 
@@ -85,7 +123,10 @@
      name: 'App',
      data () {
          return {
+             selectedRowKeys: [],
              loading: false,
+             actionVisible: false,
+             cancelVisible: false,
              columns,
              data
          }
@@ -94,8 +135,33 @@
          // this.fetch()
      },
      methods: {
+         onSelectChange(selectedRowKeys) {
+             console.log(">>>>>>>>>>> ", selectedRowKeys)
+             this.selectedRowKeys = selectedRowKeys
+         },
          fetch(params = {}) {
              console.log('params', params)
+         },
+         query() {
+             console.log(">>>query")
+         },
+         actions() {
+             this.actionVisible = true
+         },
+         cancel() {
+             this.cancelVisible = true
+         },
+         handleAction(e) {
+             console.log(e)
+             setTimeout(() => {
+                 this.actionVisible = false;
+             }, 2000);
+         },
+         handleCancel(e) {
+             console.log(e)
+             setTimeout(() => {
+                 this.cancelVisible = false;
+             }, 2000);             
          }
      }
  }
@@ -115,5 +181,19 @@
  }
  img {
      height: 120px;
+ }
+ .container {
+     margin: 10px;
+ }
+ .buttons {
+     margin: 10px;
+     display: flex;     
+ }
+ .button-item {
+     margin: 4px;
+ }
+ .fields {
+     margin: 20px;
+     display: flex;
  }
 </style>
