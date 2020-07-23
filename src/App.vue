@@ -40,6 +40,7 @@
             <p>Some contents...</p>
             <p>Some contents...</p>
             <p>Some contents...</p>
+
         </a-modal>
 
         <a-modal v-model="cancelVisible" title="Cancel Modal" @ok="handleCancel" width="1000px" >
@@ -69,6 +70,7 @@
          key: 'age',
          width: 80,
      },
+
      {
          title: 'Address',
          dataIndex: 'address',
@@ -134,6 +136,7 @@
      mounted() {
          // this.fetch()
      },
+
      methods: {
          onSelectChange(selectedRowKeys) {
              console.log(">>>>>>>>>>> ", selectedRowKeys)
