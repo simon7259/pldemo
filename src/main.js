@@ -6,9 +6,11 @@ import Antd from 'ant-design-vue';
 
 import 'ant-design-vue/dist/antd.css';
 import HelloWorld from "./components/HelloWorld";
+import axios from "axios";
 
 
 Vue.config.productionTip = false;
+Vue.prototype.axios = axios;
 
 
 Vue.use(Antd);

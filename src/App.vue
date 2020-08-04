@@ -29,11 +29,10 @@
             <a-table :columns="columns"
                      :data-source="data"
                      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
-                     :pagination=false
+                     :pagination=true
             >
                 <a slot="name" slot-scope="text">{{ text }}</a>
             </a-table>
-
         </div>
 
         <a-modal v-model="actionVisible" title="Action Modal" @ok="handleAction" width="1200px">
@@ -104,7 +103,7 @@
             </div>
         </a-modal>
 
-        <a-modal v-model="cancelVisible" title="Cancel Modal" @ok="handleCancel" width="1400px">
+        <a-modal v-model="cancelVisible" title="Cancel Modal" @ok="handleCancel" width="1600px">
             <div class="ant-row">
                 <div class="ant-col-12">
                     <a-table :row-selection="rowSelection" :columns="selectedColumns" :data-source="selectedData"/>
@@ -135,6 +134,10 @@
 
 <script>
     //import HelloWorld from './components/HelloWorld.vue'
+    import {version} from "ant-design-vue";
+    import moment from "moment";
+    import axios from "axios";
+
     const selectedColumns = [
         {
             title: 'FunctionName',
@@ -175,32 +178,49 @@
             key: 'id'
         },
         {
-            title: 'Transaction Amount',
-            dataIndex: 'transactionAmount',
-            key: 'transactionAmount'
-        },
-        {
             title: 'Change Type',
             dataIndex: 'changeType',
             key: 'changeType'
         },
         {
+            title: 'Transaction Date',
+            dataIndex: 'transactionDate',
+            key: 'transactionDate'
+        },
+        {
+            title: 'Transaction Mode',
+            dataIndex: 'transactionMode',
+            key: 'transactionMode',
+        },
+        {
+            title: 'Transaction Amount',
+            dataIndex: 'transactionAmount',
+            key: 'amount'
+        },
+        {
+            title: 'Principal',
+            dataIndex: 'principal',
+            key: 'principal'
+        },
+        {
+            title: 'Interest',
+            dataIndex: 'interest',
+            key: 'interest'
+        },
+        {
             title: 'Status',
             dataIndex: 'status',
-            key: 'status'
-        },
-        {
-            title: 'Flags',
-            dataIndex: 'flags',
-            key: 'status'
-        },
-        {
-            title: 'Opreated Id',
-            dataIndex: 'opreatedId',
-            key: "opreatedId"
+            key: 'transactionStatus'
         }
     ];
     const columns = [
+        {
+            title: 'Application Id',
+            dataIndex: 'applicationId',
+            key: 'applicationId',
+            scopedSlots: {customRender: 'applicationId'},
+            align: 'center'
+        },
         {
             title: 'Application No',
             dataIndex: 'applicationNo',
@@ -258,150 +278,14 @@
         }
     ];
 
-    const modalData = [
-        {
-            key: '1',
-            id: '1',
-            transactionAmount: '$100.00',
-            changeType: 'Pay Off',
-            status: 'None',
-            flags: 'Credit',
-            opreatedId: '16'
-        },
-        {
-            key: '2',
-            id: '2',
-            transactionAmount: '$100.00',
-            changeType: 'Pay Off',
-            status: 'None',
-            flags: 'Credit',
-            opreatedId: '16'
-        },
-        {
-            key: '3',
-            id: '3',
-            transactionAmount: '$100.00',
-            changeType: 'Pay Off',
-            status: 'None',
-            flags: 'Credit',
-            opreatedId: '16'
-        },
-    ];
-    const data = [
-        {
-            key: '1',
-            applicationNo: 'IBL2000184996',
-            effectiveDate: '2020-05-04',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: 'C01',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '2',
-            applicationNo: 'IBL2000176351',
-            effectiveDate: '2020-05-04',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: 'C10',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Michael Franklin'
-        },
-        {
-            key: '3',
-            applicationNo: 'IBL2000185661',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '4',
-            applicationNo: 'IBL2000186407',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },{
-            key: '5',
-            applicationNo: 'IBL2000189855',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '6',
-            applicationNo: 'IBL2000190363',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '7',
-            applicationNo: 'IBL2000191133',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '8',
-            applicationNo: 'IBL2000191334',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '9',
-            applicationNo: 'IBL2000191349',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-        {
-            key: '10',
-            applicationNo: 'IBL2000191399',
-            effectiveDate: '2020-05-06',
-            customerName: 'Joshua Beard',
-            requestedPrincipal: '$275.00',
-            interestRate: '780.00%',
-            lastReturnCode: '',
-            lastReturnDate: '2020-05-04',
-            approvedPerson: 'Glenda Antone'
-        },
-    ];
+    const data = [];
+    const modalData = [];
     export default {
         name: 'App',
         data() {
             return {
+                moment,
+                version,
                 selectedRowKeys: [],
                 loading: false,
                 actionVisible: false,
@@ -418,7 +302,7 @@
                 paramJson: null
             }
         },
-        mounted() {
+        mounted: {
             // this.fetch()
         },
         computed: {
@@ -484,19 +368,24 @@
                 console.log(">>>query")
             },
             actions() {
+                axios.get( 'http://localhost:8401/api/transaction-schedule-item/item/533245').then(response => {
+                    this.modalData = response.data.data;
+                }).catch(error => {
+                    console.log(error);
+                });
                 this.actionVisible = true
             },
             cancel() {
                 this.cancelVisible = true
             },
             handleAction(e) {
-                console.log(e)
+                console.log(e);
                 setTimeout(() => {
                     this.actionVisible = false;
                 }, 2000);
             },
             handleCancel(e) {
-                console.log(e)
+                console.log(e);
                 setTimeout(() => {
                     this.cancelVisible = false;
                 }, 2000);
@@ -509,6 +398,14 @@
                 console.log(this.scheduleId);
                 console.log(this.paramJson);
             }
+        },
+        created() {
+            axios.get('http://localhost:8401/api/transaction-schedule/work-queue/1').then(response => {
+                this.data = response.data.data;
+            }).catch(error => {
+                console.log(error);
+            });
+
         }
     }
 
