@@ -11,7 +11,7 @@ serve.interception.request.use(
 )
 
 serve.interception.response.use(
-    res => Promise.resolve(res)
+    res => Promise.resolve(res),
     err => {
         console.log(err)
     }
