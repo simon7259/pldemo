@@ -28,6 +28,7 @@
 
             <a-table :columns="queryColumns"
                      :data-source="queryList"
+                     :rowKey='record=>record.applicationId'
                      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
                      :pagination=true
             >
@@ -44,7 +45,7 @@
                     </a-button>
                 </div>
                 <div style="padding-left:10px;width:100%">
-                    <a-table :columns="actionColumns" :data-source="actionModalData">
+                    <a-table :columns="actionColumns" :data-source="actionModalData" key="actionTable">
                         <template slot="action" slot-scope="text, record" >
                             <!-- <button type="primary" @click="">Delete</button> -->
                             <a-dropdown>
@@ -71,7 +72,7 @@
                     <a-table :row-selection="rowSelection" :columns="cancelColumns" :data-source="selectedData"/>
                 </div> -->
                 <div style="padding-left:10px;width:100%;">
-                    <a-table :columns="actionColumns" :data-source="actionModalData">
+                    <a-table :columns="actionColumns" :data-source="actionModalData" key="cancelTable">
                         <template slot="action" slot-scope="text, record" >
                             <!-- <button type="primary" @click="">Delete</button> -->
                             <a-button type="danger" @click="handleActionDelete(record)" class="button-item">cancel</a-button>
@@ -82,27 +83,27 @@
         </a-modal>
 
         <a-modal v-model="payoffDialogVisible" title="PayOff Dialog" width="1200px">
-            PayOff Date: <a-date-picker @change="onChange" />
-            <a-table :columns="actionColumns" :data-source="data">
+            PayOff Date: <a-date-picker  />
+            <a-table :columns="actionColumns" key="payOffTable">
                 <a slot="name" slot-scope="text">{{ text }}</a>
             </a-table>
         </a-modal>
         <a-modal v-model="payNoffDialogVisible" title="PayOff In N Dialog" width="1200px">
-            Next Payroll Date: <a-date-picker @change="onChange" />
-            PayOff In N: <a-input-number id="payNoffNumber" v-model="payNoff" :min="1" :max="10" @change="onChange" />
+            Next Payroll Date: <a-date-picker  />
+            PayOff In N: <a-input-number id="payNoffNumber" v-model="payNoff" :min="1" :max="10"  />
 
-            <a-table :columns="actionColumns" :data-source="data">
+            <a-table :columns="actionColumns" key="payNoffTable">
                 <a slot="name" slot-scope="text">{{ text }}</a>
             </a-table>
         </a-modal>
         <a-modal v-model="payDownVisible" title="PayDown Dialog" width="1200px">
-            Effective Date: <a-date-picker @change="onChange" />
+            Effective Date: <a-date-picker  />
             Pay Down Amount: <a-input-number
                                 :default-value="1000"
                                 :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                 :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                @change="onChange" />
-            <a-table :columns="actionColumns" :data-source="data">
+                                 />
+            <a-table :columns="actionColumns" key="payDownTable">
                 <a slot="name" slot-scope="text">{{ text }}</a>
             </a-table>
         </a-modal>
@@ -116,6 +117,9 @@
     //import HelloWorld from './components/HelloWorld.vue'
     import axios from "axios";
     import { operations, queryColumns, cancelColumns, actionColumns } from "./utils"
+
+    const queryData = [{applicationId:1, applicationNo: 'AAAAA',}, {applicationId: 2, applicationNo: "BBBBB", }]
+    const actionData = [{id: 1, changeType: 2, principal: 3}]
     
     export default {
         name: 'App',
@@ -131,32 +135,30 @@
                 queryColumns,
                 cancelColumns,
                 actionColumns,
-                queryList: [],
-                actionModalData: [{id: 1, changeType: 2, principal: 3}],
+                queryList: queryData,
+                actionModalData: actionData,
                 selectedData: [],
                 selectedRowKey: [],
                 functionNameParam: null,
                 scheduleId: null,
                 paramJson: null,
+                selectedRowId: 0,
                 operations,
                 payNoff: 0,
             }
         },        
-        mounted: {
-            // this.fetch()
-        },
+        // mounted: {
+        //     // this.fetch()
+        // },
         computed: {
             operationVisible () {
                 return this.operations.filter((item) => item.visible === true)
             },
         },
         methods: {
-            onSelectChanges(selectedRowKey) {
-                this.selectedRowKey = selectedRowKey;
-            },
             onSelectChange(selectedRowKeys) {
-                console.log(">>>>>>>>>>> ", selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
+                this.selectedRowId = selectedRowKeys[0]
             },
             fetch(params = {}) {
                 console.log('params', params)
@@ -165,6 +167,7 @@
                 console.log(">>>query")
             },
             actions() {
+                if(this.selectedRowKeys.length === 0) return;
                 axios.get( 'http://localhost:8401/api/transaction-schedule-item/item/533245').then(response => {
                     this.actionModalData = response.data.data;
                 }).catch(error => {
@@ -190,7 +193,7 @@
             handleChange(value) {
                 this.functionNameParam = value;
             },
-            handleOperation(operation) {
+            handleOperation(operation) {                
                 console.log(operation)
                 if (operation === "101") {
                     this.payoffDialogVisible = true

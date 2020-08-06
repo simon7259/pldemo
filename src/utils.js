@@ -43,6 +43,11 @@ const operations = [
         label: "Change Payday On Available",
         value: "109",
         visible: false,
+    },
+    {
+        label: "Revoke",
+        value: "007",
+        visible: true,
     }
 ]
 
@@ -114,22 +119,27 @@ const queryColumns = [
 const cancelColumns = [
     {
         title: 'FunctionName',
+        key: 'functionName',
         dataIndex: 'functionName'
     },
     {
         title: 'Created Time',
+        key: 'createdTime',
         dataIndex: 'createdTime'
     },
     {
         title: 'Created By',
+        key: 'createdBy',
         dataIndex: 'createdBy'
     },
     {
         title: 'Effective At',
+        key: 'effectiveAt',
         dataIndex: 'effectiveAt'
     },
     {
         title: 'Status',
+        key: 'status',
         dataIndex: 'status'
     }
 ]
